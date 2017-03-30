@@ -21,12 +21,10 @@
         (else empty)))
     target))
     
-(: draw (-> TurtleF (Instance Bitmap%)))
-(define (draw tf)
-  (let* ([width 800]
-         [height 800]
-         [centerx 400]
-         [centery 400])
+(: draw (->* (TurtleF) (#:width Positive-Integer #:height Positive-Integer) (Instance Bitmap%)))
+(define (draw tf #:width [width 800] #:height [height 800])
+  (let ([centerx (/ width 2)]
+        [centery (/ height 2)])
     (turtle-bitmap (tf (make-turtle centerx centery))
                    width
                    height)))
