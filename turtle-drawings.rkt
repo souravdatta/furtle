@@ -19,5 +19,15 @@
                                      (car (third x)) (cdr (third x))))
         (else empty)))
     target))
+    
+(: draw (-> TurtleF (Instance Bitmap%)))
+(define (draw tf)
+  (let* ([width 800]
+         [height 800]
+         [centerx 400]
+         [centery 400])
+    (turtle-bitmap (tf (make-turtle centerx centery))
+                   width
+                   height)))
 
 (provide (all-defined-out))
