@@ -13,10 +13,11 @@
          [ops : (Listof Op) (reverse (turtle-ops t))])
     (for ([x ops])
       (cond
-        ((eq? (first x) 'line) (send dc
-                                     draw-line
-                                     (car (second x)) (cdr (second x))
-                                     (car (third x)) (cdr (third x))))
+        ((and (eq? (car (first x)) 'line)
+              (eq? (cdr (first x)) 'pendown)) (send dc
+                                                    draw-line
+                                                    (car (second x)) (cdr (second x))
+                                                    (car (third x)) (cdr (third x))))
         (else empty)))
     target))
     

@@ -1,12 +1,13 @@
 #lang typed/racket
 
 
-(define-type Op (U (List 'line (Pairof Real Real) (Pairof Real Real))
-                   (List 'arc (Pairof Real Real) (Pairof Real Real) Real)))
+(define-type Op (U (List (Pairof 'line (U 'penup 'pendown))  (Pairof Real Real) (Pairof Real Real))
+                   (List (Pairof 'arc (U 'penup 'pendown)) (Pairof Real Real) (Pairof Real Real) Real)))
                           
 (struct turtle ([tx : Real]
                 [ty : Real]
                 [angle : Real]
+                [penstate : (U 'penup 'pendown)]
                 [ops : (Listof Op)]))
 
 (define-type TurtleF (-> turtle turtle))
@@ -18,10 +19,13 @@
          [rad-angle (degrees->radians (turtle-angle t))]
          [newx (- tx (* len (sin rad-angle)))]
          [newy (- ty (* len (cos rad-angle)))])
-    (turtle newx newy (turtle-angle t) (cons (list 'line
-                                                   (cons tx ty)
-                                                   (cons newx newy))
-                                             (turtle-ops t)))))
+    (turtle newx newy
+            (turtle-angle t)
+            (turtle-penstate t)
+            (cons (list (cons 'line (turtle-penstate t))
+                        (cons tx ty)
+                        (cons newx newy))
+                  (turtle-ops t)))))
 
 (: bk (-> Real turtle turtle))
 (define (bk len t)
@@ -32,6 +36,7 @@
   (turtle (turtle-tx t)
           (turtle-ty t)
           (- (turtle-angle t) angle)
+          (turtle-penstate t)
           (turtle-ops t)))
 
 (: lt (-> Real turtle turtle))
@@ -39,6 +44,7 @@
   (turtle (turtle-tx t)
           (turtle-ty t)
           (+ (turtle-angle t) angle)
+          (turtle-penstate t)
           (turtle-ops t)))
 
 (: turtle-compose (-> (Listof TurtleF)
@@ -69,6 +75,22 @@
                                           (curry lt 1)))])
     (fn t)))
 
+(: pu (-> turtle turtle))
+(define (pu t)
+  (turtle (turtle-tx t)
+          (turtle-ty t)
+          (turtle-angle t)
+          'penup
+          (turtle-ops t)))
+
+(: pd (-> turtle turtle))
+(define (pd t)
+  (turtle (turtle-tx t)
+          (turtle-ty t)
+          (turtle-angle t)
+          'pendown
+          (turtle-ops t)))
+        
 (define-syntax t<
   (syntax-rules ()
     [(_ fn) fn]
@@ -85,7 +107,7 @@
 
 (: make-turtle (-> Real Real turtle))
 (define (make-turtle xpos ypos)
-  (turtle xpos ypos 0 empty))
+  (turtle xpos ypos 0 'pendown empty))
 
 
 (provide
