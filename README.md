@@ -3,7 +3,7 @@ furtle
 
 Is a WIP functional turtle graphics implementation.
 
-##Example
+Example
 
     #lang typed/racket
     
@@ -23,4 +23,5 @@ Is a WIP functional turtle graphics implementation.
     
     (draw (fib-tree 14))
    
-  
+!("https://github.com/souravdatta/furtle/raw/master/fib-tree-example.png"  Example)
+
