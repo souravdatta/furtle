@@ -22,7 +22,7 @@ Example
               (turtles)))
     
     (draw (fib-tree 14))
-![all text](https://github.com/souravdatta/furtle/raw/master/fib-tree-example.png "Example")
+![all text](https://github.com/souravdatta/furtle/raw/master/fib-tree-example.png "Fibonacci tree")
 
 Another example
 
@@ -54,6 +54,7 @@ Another example
   
     
     (draw (koch 5 5) #:height 4000 #:width 4000)
+![alt text](https://github.com/souravdatta/furtle/raw/master/koch-example.png "Koch curve")
 
        
 
