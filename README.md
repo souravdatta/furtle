@@ -24,5 +24,36 @@ Example
     (draw (fib-tree 14))
 ![all text](https://github.com/souravdatta/furtle/raw/master/fib-tree-example.png "Example")
 
+Another example
 
+    #lang typed/racket
+    
+    (require furtle)
+    
+    (: line (-> Integer Real TurtleF))
+    (define (line count length)
+        (if (= count 0)
+            (turtles (t< fd length))
+            (let ([count (- count 1)])
+                 (turtles (line count length)
+                 (t< lt 60)
+                 (line count length)
+                 (t< rt 120)
+                 (line count length)
+                 (t< lt 60)
+                 (line count length)))))
+
+    (: koch (-> Integer Real TurtleF))
+    (define (koch count length)
+      (turtles (t< rt 30)
+               (line count length)
+               (t< rt 120)
+               (line count length)
+               (t< rt 120)
+               (line count length)))
+  
+    
+    (draw (koch 5 5) #:height 4000 #:width 4000)
+
+       
 
