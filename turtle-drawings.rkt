@@ -5,12 +5,15 @@
 (require "turtle-main.rkt")
 
 (: turtle-bitmap (->* (turtle Positive-Integer Positive-Integer)
-                      ()
+                      (#:line-width Positive-Integer)
                       (Instance Bitmap%)))
-(define (turtle-bitmap t width height)
+(define (turtle-bitmap t width height #:line-width [line-width 2])
   (let* ([target : (Instance Bitmap%) (make-bitmap width height)]
          [dc : (Instance Bitmap-DC%) (new bitmap-dc% [bitmap target])]
          [ops : (Listof Op) (reverse (turtle-ops t))])
+    (send dc set-brush "orange" 'solid)
+    (send dc set-pen "black" line-width 'solid)
+    (send dc draw-rectangle 0 0 width height)
     (for ([x ops])
       (cond
         ((and (eq? (car (first x)) 'line)
@@ -19,14 +22,22 @@
                                                     (car (second x)) (cdr (second x))
                                                     (car (third x)) (cdr (third x))))
         (else empty)))
+    (send dc set-brush "red" 'solid)
+    (send dc set-pen "red" 1 'solid)
+    (send dc draw-ellipse
+          (- (abs (turtle-tx t)) 4)
+          (- (abs (turtle-ty t)) 4)
+          8
+          8)
     target))
     
-(: draw (->* (TurtleF) (#:width Positive-Integer #:height Positive-Integer) (Instance Bitmap%)))
-(define (draw tf #:width [width 800] #:height [height 800])
+(: draw (->* (TurtleF) (#:width Positive-Integer #:height Positive-Integer #:line-width Positive-Integer) (Instance Bitmap%)))
+(define (draw tf #:width [width 800] #:height [height 800] #:line-width [line-width 2])
   (let ([centerx (/ width 2)]
         [centery (/ height 2)])
     (turtle-bitmap (tf (make-turtle centerx centery))
                    width
-                   height)))
+                   height
+                   #:line-width line-width)))
 
 (provide (all-defined-out))
