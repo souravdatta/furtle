@@ -1,6 +1,7 @@
 #lang typed/racket
 
-(require typed/racket/draw)
+(require typed/racket/draw
+         typed/racket/gui)
 
 (require "turtle-main.rkt")
 
@@ -40,4 +41,25 @@
                    height
                    #:line-width line-width)))
 
+(: show! (->* (TurtleF) (#:width Positive-Integer #:height Positive-Integer #:line-width Positive-Integer) Void))
+(define (show! tf #:width [width 800] #:height [height 800] #:line-width [line-width 2])
+  (let* ([centerx (/ width 2)]
+         [centery (/ height 2)]
+         [frame : (Instance Frame%) (new frame% [label "Furtle"] [width width] [height height])]
+         [canvas : (Instance Canvas%) (new canvas%
+                                           [parent frame]
+                                           [min-width width]
+                                           [min-height height]
+                                           [paint-callback (lambda ([c : (Instance Canvas%)]
+                                                                    [dc : (Instance DC<%>)])
+                                                             (send dc clear)
+                                                             (send dc draw-bitmap
+                                                                   (turtle-bitmap (tf (make-turtle centerx centery))
+                                                                                  width
+                                                                                  height
+                                                                                  #:line-width line-width)
+                                                                   0 0))])])
+    (send frame show #t)))
+
+  
 (provide (all-defined-out))
