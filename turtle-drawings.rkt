@@ -8,6 +8,9 @@
 (: default-line-width Positive-Integer)
 (define default-line-width 1)
 
+(: background-color String)
+(define background-color "orange")
+
 (: turtle-bitmap (->* (turtle Positive-Integer Positive-Integer)
                       (#:line-width Positive-Integer)
                       (Instance Bitmap%)))
@@ -15,9 +18,10 @@
   (let* ([target : (Instance Bitmap%) (make-bitmap width height)]
          [dc : (Instance Bitmap-DC%) (new bitmap-dc% [bitmap target])]
          [ops : (Listof Op) (reverse (turtle-ops t))])
-    (send dc set-brush "orange" 'solid)
-    (send dc set-pen "black" line-width 'solid)
+    (send dc set-brush background-color 'solid)
+    (send dc set-pen background-color line-width 'solid)
     (send dc draw-rectangle 0 0 width height)
+    (send dc set-pen "black" line-width 'solid)
     (for ([x ops])
       (cond
         ((and (eq? (car (first x)) 'line)
@@ -49,6 +53,10 @@
   (let* ([centerx (/ width 2)]
          [centery (/ height 2)]
          [frame : (Instance Frame%) (new frame% [label "Furtle"] [width width] [height height])]
+         [bitmap : (Instance Bitmap%) (turtle-bitmap (tf (make-turtle centerx centery))
+                                                                                  width
+                                                                                  height
+                                                                                  #:line-width line-width)]
          [canvas : (Instance Canvas%) (new canvas%
                                            [parent frame]
                                            [min-width width]
@@ -56,12 +64,13 @@
                                            [paint-callback (lambda ([c : (Instance Canvas%)]
                                                                     [dc : (Instance DC<%>)])
                                                              (send dc clear)
+                                                             (send dc set-brush background-color 'solid)
+                                                             (send dc set-pen background-color line-width 'solid)
+                                                             (send dc draw-rectangle 0 0 (send frame get-width) (send frame get-height))
                                                              (send dc draw-bitmap
-                                                                   (turtle-bitmap (tf (make-turtle centerx centery))
-                                                                                  (send frame get-width)
-                                                                                  (send frame get-height)
-                                                                                  #:line-width line-width)
-                                                                   0 0))])])
+                                                                   bitmap
+                                                                   (- (/ (send frame get-width) 2) (/ width 2))
+                                                                   (- (/ (send frame get-height) 2) (/ height 2))))])])
     (send frame show #t)))
 
   
