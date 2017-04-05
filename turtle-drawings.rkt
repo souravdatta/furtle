@@ -5,10 +5,13 @@
 
 (require "turtle-main.rkt")
 
+(: default-line-width Positive-Integer)
+(define default-line-width 1)
+
 (: turtle-bitmap (->* (turtle Positive-Integer Positive-Integer)
                       (#:line-width Positive-Integer)
                       (Instance Bitmap%)))
-(define (turtle-bitmap t width height #:line-width [line-width 2])
+(define (turtle-bitmap t width height #:line-width [line-width default-line-width])
   (let* ([target : (Instance Bitmap%) (make-bitmap width height)]
          [dc : (Instance Bitmap-DC%) (new bitmap-dc% [bitmap target])]
          [ops : (Listof Op) (reverse (turtle-ops t))])
@@ -33,7 +36,7 @@
     target))
     
 (: draw (->* (TurtleF) (#:width Positive-Integer #:height Positive-Integer #:line-width Positive-Integer) (Instance Bitmap%)))
-(define (draw tf #:width [width 800] #:height [height 800] #:line-width [line-width 2])
+(define (draw tf #:width [width 800] #:height [height 800] #:line-width [line-width default-line-width])
   (let ([centerx (/ width 2)]
         [centery (/ height 2)])
     (turtle-bitmap (tf (make-turtle centerx centery))
@@ -42,7 +45,7 @@
                    #:line-width line-width)))
 
 (: show! (->* (TurtleF) (#:width Positive-Integer #:height Positive-Integer #:line-width Positive-Integer) Void))
-(define (show! tf #:width [width 800] #:height [height 800] #:line-width [line-width 2])
+(define (show! tf #:width [width 800] #:height [height 800] #:line-width [line-width default-line-width])
   (let* ([centerx (/ width 2)]
          [centery (/ height 2)]
          [frame : (Instance Frame%) (new frame% [label "Furtle"] [width width] [height height])]
@@ -55,8 +58,8 @@
                                                              (send dc clear)
                                                              (send dc draw-bitmap
                                                                    (turtle-bitmap (tf (make-turtle centerx centery))
-                                                                                  width
-                                                                                  height
+                                                                                  (send frame get-width)
+                                                                                  (send frame get-height)
                                                                                   #:line-width line-width)
                                                                    0 0))])])
     (send frame show #t)))
