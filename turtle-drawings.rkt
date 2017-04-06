@@ -19,7 +19,7 @@
          [dc : (Instance Bitmap-DC%) (new bitmap-dc% [bitmap target])]
          [ops : (Listof Op) (reverse (turtle-ops t))])
     (send dc set-brush background-color 'solid)
-    (send dc set-pen background-color line-width 'solid)
+    (send dc set-pen "red" line-width 'solid)
     (send dc draw-rectangle 0 0 width height)
     (send dc set-pen "black" line-width 'solid)
     (for ([x ops])
@@ -30,13 +30,14 @@
                                                     (car (second x)) (cdr (second x))
                                                     (car (third x)) (cdr (third x))))
         (else empty)))
-    (send dc set-brush "red" 'solid)
-    (send dc set-pen "red" 1 'solid)
-    (send dc draw-ellipse
-          (- (abs (turtle-tx t)) 4)
-          (- (abs (turtle-ty t)) 4)
-          8
-          8)
+    (when (turtle-visible t)
+      (send dc set-brush "red" 'solid)
+      (send dc set-pen "red" 1 'solid)
+      (send dc draw-ellipse
+            (- (abs (turtle-tx t)) 4)
+            (- (abs (turtle-ty t)) 4)
+            8
+            8))
     target))
     
 (: draw (->* (TurtleF) (#:width Positive-Integer #:height Positive-Integer #:line-width Positive-Integer) (Instance Bitmap%)))
@@ -70,7 +71,7 @@
                                                              (send dc draw-bitmap
                                                                    bitmap
                                                                    (- (/ (send frame get-width) 2) (/ width 2))
-                                                                   (- (/ (send frame get-height) 2) (/ height 2))))])])
+                                                                   (- (/ (send frame get-height) 2) (/ height 2) 10)))])])
     (send frame show #t)))
 
   

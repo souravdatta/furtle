@@ -8,6 +8,7 @@
                 [ty : Real]
                 [angle : Real]
                 [penstate : (U 'penup 'pendown)]
+                [visible : Boolean]
                 [ops : (Listof Op)]))
 
 (define-type TurtleF (-> turtle turtle))
@@ -22,6 +23,7 @@
     (turtle newx newy
             (turtle-angle t)
             (turtle-penstate t)
+            (turtle-visible t)
             (cons (list (cons 'line (turtle-penstate t))
                         (cons tx ty)
                         (cons newx newy))
@@ -37,6 +39,7 @@
           (turtle-ty t)
           (- (turtle-angle t) angle)
           (turtle-penstate t)
+          (turtle-visible t)
           (turtle-ops t)))
 
 (: lt (-> Real turtle turtle))
@@ -45,6 +48,7 @@
           (turtle-ty t)
           (+ (turtle-angle t) angle)
           (turtle-penstate t)
+          (turtle-visible t)
           (turtle-ops t)))
 
 (: turtle-compose (-> (Listof TurtleF)
@@ -75,20 +79,40 @@
                                           (curry lt 1)))])
     (fn t)))
 
-(: pu (-> turtle turtle))
+(: pu TurtleF)
 (define (pu t)
   (turtle (turtle-tx t)
           (turtle-ty t)
           (turtle-angle t)
           'penup
+          (turtle-visible t)
           (turtle-ops t)))
 
-(: pd (-> turtle turtle))
+(: pd TurtleF)
 (define (pd t)
   (turtle (turtle-tx t)
           (turtle-ty t)
           (turtle-angle t)
           'pendown
+          (turtle-visible t)
+          (turtle-ops t)))
+
+(: hide TurtleF)
+(define (hide t)
+  (turtle (turtle-tx t)
+          (turtle-ty t)
+          (turtle-angle t)
+          (turtle-penstate t)
+          #f
+          (turtle-ops t)))
+
+(: show TurtleF)
+(define (show t)
+  (turtle (turtle-tx t)
+          (turtle-ty t)
+          (turtle-angle t)
+          (turtle-penstate t)
+          #t
           (turtle-ops t)))
         
 (define-syntax t<
@@ -107,7 +131,14 @@
 
 (: make-turtle (-> Real Real turtle))
 (define (make-turtle xpos ypos)
-  (turtle xpos ypos 0 'pendown empty))
+  (turtle xpos ypos 0 'pendown #t empty))
+
+(define forward fd)
+(define back bk)
+(define right rt)
+(define left lt)
+(define penup pu)
+(define pendown pd)
 
 
 (provide
