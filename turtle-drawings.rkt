@@ -29,6 +29,7 @@
     (send dc set-pen "red" line-width 'solid)
     (send dc draw-rectangle 0 0 width height)
     (send dc set-pen "black" line-width 'solid)
+    (send dc set-brush background-color 'transparent)
     (for ([x ops])
       (cond
         ((and (eq? (car (first x)) 'line)
