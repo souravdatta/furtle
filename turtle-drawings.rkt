@@ -3,6 +3,13 @@
 (require typed/racket/draw
          typed/racket/gui)
 
+(require/typed racket/draw/arrow
+               [draw-arrow (->* ((Instance Bitmap-DC%) Real Real Real Real Real Real)
+                                (#:pen-width Real
+                                 #:arrow-head-size Real
+                                 #:arrow-root-radius Real)
+                                Void)])
+
 (require "turtle-main.rkt")
 
 (: default-line-width Positive-Integer)
@@ -29,15 +36,25 @@
                                                     draw-line
                                                     (car (second x)) (cdr (second x))
                                                     (car (third x)) (cdr (third x))))
+        ((and (eq? (car (first x)) 'arc)
+              (eq? (cdr (first x)) 'pendown)) (send dc
+                                                    draw-arc
+                                                    (second x) (third x)
+                                                    (abs (fourth x)) (abs (fifth x))
+                                                    (sixth x) (seventh x)))
         (else empty)))
     (when (turtle-visible t)
       (send dc set-brush "red" 'solid)
       (send dc set-pen "red" 1 'solid)
-      (send dc draw-ellipse
-            (- (abs (turtle-tx t)) 4)
-            (- (abs (turtle-ty t)) 4)
-            8
-            8))
+      (draw-arrow dc
+                  (turtle-tx t)
+                  (turtle-ty t)
+                  (- (turtle-tx t) (* 4 (sin (degrees->radians (turtle-angle t)))))
+                  (- (turtle-ty t) (* 4 (cos (degrees->radians (turtle-angle t)))))
+                  1
+                  1
+                  #:arrow-root-radius 0
+                  #:arrow-head-size 12))
     target))
     
 (: draw (->* (TurtleF) (#:width Positive-Integer #:height Positive-Integer #:line-width Positive-Integer) (Instance Bitmap%)))
@@ -55,9 +72,9 @@
          [centery (/ height 2)]
          [frame : (Instance Frame%) (new frame% [label "Furtle"] [width width] [height height])]
          [bitmap : (Instance Bitmap%) (turtle-bitmap (tf (make-turtle centerx centery))
-                                                                                  width
-                                                                                  height
-                                                                                  #:line-width line-width)]
+                                                     width
+                                                     height
+                                                     #:line-width line-width)]
          [canvas : (Instance Canvas%) (new canvas%
                                            [parent frame]
                                            [min-width width]

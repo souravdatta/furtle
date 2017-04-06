@@ -2,7 +2,7 @@
 
 
 (define-type Op (U (List (Pairof 'line (U 'penup 'pendown))  (Pairof Real Real) (Pairof Real Real))
-                   (List (Pairof 'arc (U 'penup 'pendown)) (Pairof Real Real) (Pairof Real Real) Real)))
+                   (List (Pairof 'arc (U 'penup 'pendown)) Real Real Real Real Real Real)))
                           
 (struct turtle ([tx : Real]
                 [ty : Real]
@@ -78,6 +78,26 @@
   (let ([fn (turtle-compose-n angle (list (curry fd (/ (* 2 pi radius) 360))
                                           (curry lt 1)))])
     (fn t)))
+
+(: arc (-> Real Real turtle turtle))
+(define (arc angle rad t)
+  (let ([x (- (turtle-tx t) rad)]
+        [y (- (turtle-ty t) rad)]
+        [width (* rad 2)]
+        [height (* rad 2)]
+        [start-angle (degrees->radians (+ (turtle-angle t) 0))]
+        [end-angle (degrees->radians (+ (turtle-angle t) angle))])
+    (turtle (turtle-tx t)
+            (turtle-ty t)
+            (turtle-angle t)
+            (turtle-penstate t)
+            (turtle-visible t)
+            (cons (list (cons 'arc (turtle-penstate t))
+                        x y
+                        width height
+                        start-angle end-angle)
+                  (turtle-ops t)))))
+                        
 
 (: pu TurtleF)
 (define (pu t)
