@@ -181,7 +181,7 @@ Takes a Positive-Integer n and any number of TurtleF forms f1 ... and creates a 
 
 The main struct which holds the current state of the turtle. Every operation works on a turtle struct and creates a new one with the drawing operation cons'd to its list of ops.
 
-@defthing[TurtleF (turtle? . -> . turtle?)] {
+@defthing[TurtleF (turtle? . -> . turtle?)]{
 	The basic type of every primitive operation as well as user defined function.	
 }
 
