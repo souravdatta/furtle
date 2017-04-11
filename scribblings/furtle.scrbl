@@ -167,6 +167,34 @@ Takes any number of TurtleF forms f1 ... and composes into a single function of 
 
 Takes a Positive-Integer n and any number of TurtleF forms f1 ... and creates a TurtleF which is the compositing of f1 ... repeated n times.
 
+@section{Various types in the library}
+
+@destruct[
+	turtle ([tx real?]
+			[ty real?]
+			[angle real?]
+			[penstate (or/c 'penup 'pendown)]
+			[visible boolean?]
+			[ops list?])
+
+]
+
+The main struct which holds the current state of the turtle. Every operation works on a turtle struct and creates a new one with the drawing operation cons'd to its list of ops.
+
+@defform[
+	TurtleF
+	(turtle? . -> . turtle?)
+
+]
+
+The basic type of every primitive operation as well as user defined function.
+
+@defproc[
+	(t< (op symbol?) (a any/c) ...)
+	TurtleF
+]
+
+A macro that converts a function that takes as the last argument a turtle object to a curried version with type TurtleF.
 
 @section{Turtle drawing functions}
 
