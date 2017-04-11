@@ -4,7 +4,7 @@
          typed/racket/gui)
 
 (require/typed racket/draw/arrow
-               [draw-arrow (->* ((Instance Bitmap-DC%) Real Real Real Real Real Real)
+               [draw-arrow (->* ((Instance DC<%>) Real Real Real Real Real Real)
                                 (#:pen-width Real
                                  #:arrow-head-size Real
                                  #:arrow-root-radius Real)
@@ -18,13 +18,9 @@
 (: background-color String)
 (define background-color "orange")
 
-(: turtle-bitmap (->* (turtle Positive-Integer Positive-Integer)
-                      (#:line-width Positive-Integer)
-                      (Instance Bitmap%)))
-(define (turtle-bitmap t width height #:line-width [line-width default-line-width])
-  (let* ([target : (Instance Bitmap%) (make-bitmap width height)]
-         [dc : (Instance Bitmap-DC%) (new bitmap-dc% [bitmap target])]
-         [ops : (Listof Op) (reverse (turtle-ops t))])
+(: turtle-draw (-> turtle Positive-Integer Positive-Integer (Instance DC<%>) Positive-Integer Void))
+(define (turtle-draw t width height dc line-width)
+  (let ([ops : (Listof Op) (reverse (turtle-ops t))])
     (send dc set-brush background-color 'solid)
     (send dc set-pen "red" line-width 'solid)
     (send dc draw-rectangle 0 0 width height)
@@ -55,7 +51,15 @@
                   1
                   1
                   #:arrow-root-radius 0
-                  #:arrow-head-size 12))
+                  #:arrow-head-size 12))))
+
+(: turtle-bitmap (->* (turtle Positive-Integer Positive-Integer)
+                      (#:line-width Positive-Integer)
+                      (Instance Bitmap%)))
+(define (turtle-bitmap t width height #:line-width [line-width default-line-width])
+  (let* ([target : (Instance Bitmap%) (make-bitmap width height)]
+         [dc : (Instance Bitmap-DC%) (new bitmap-dc% [bitmap target])])
+    (turtle-draw t width height dc line-width)     
     target))
     
 (: draw (->* (TurtleF) (#:width Positive-Integer #:height Positive-Integer #:line-width Positive-Integer) (Instance Bitmap%)))
@@ -69,27 +73,22 @@
 
 (: show! (->* (TurtleF) (#:width Positive-Integer #:height Positive-Integer #:line-width Positive-Integer) Void))
 (define (show! tf #:width [width 800] #:height [height 800] #:line-width [line-width default-line-width])
-  (let* ([centerx (/ width 2)]
-         [centery (/ height 2)]
-         [frame : (Instance Frame%) (new frame% [label "Furtle"] [width width] [height height])]
-         [bitmap : (Instance Bitmap%) (turtle-bitmap (tf (make-turtle centerx centery))
-                                                     width
-                                                     height
-                                                     #:line-width line-width)]
+  (let* ([frame : (Instance Frame%) (new frame% [label "Furtle"] [width width] [height height])]
          [canvas : (Instance Canvas%) (new canvas%
                                            [parent frame]
                                            [min-width width]
                                            [min-height height]
                                            [paint-callback (lambda ([c : (Instance Canvas%)]
                                                                     [dc : (Instance DC<%>)])
-                                                             (send dc clear)
-                                                             (send dc set-brush background-color 'solid)
-                                                             (send dc set-pen background-color line-width 'solid)
-                                                             (send dc draw-rectangle 0 0 (send frame get-width) (send frame get-height))
-                                                             (send dc draw-bitmap
-                                                                   bitmap
-                                                                   (- (/ (send frame get-width) 2) (/ width 2))
-                                                                   (- (/ (send frame get-height) 2) (/ height 2) 10)))])])
+                                                             (let* ([fwidth : Positive-Integer (+ 1 (send frame get-width))]
+                                                                    [fheight : Positive-Integer (+ 1 (send frame get-height))])
+                                                               (send dc clear)
+                                                               (turtle-draw (tf (make-turtle (/ fwidth 2)
+                                                                                             (/ fheight 2)))
+                                                                            fwidth
+                                                                            fheight
+                                                                            dc
+                                                                            line-width)))])])
     (send frame show #t)))
 
   
