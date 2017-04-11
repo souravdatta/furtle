@@ -169,7 +169,7 @@ Takes a Positive-Integer n and any number of TurtleF forms f1 ... and creates a 
 
 @section{Various types in the library}
 
-@destruct[
+@defstruct[
 	turtle ([tx real?]
 			[ty real?]
 			[angle real?]
