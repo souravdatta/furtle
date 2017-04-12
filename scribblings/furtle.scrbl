@@ -80,92 +80,66 @@ Or,
 @section{Turtle move functions}
 
 @defproc[(fd (n real?) (t turtle?))
-			turtle?]
-
-Forwards the turtle by n (Real). Aliased as foward.
+			turtle?]{Forwards the turtle by n (Real). Aliased as foward.}
 
 @defproc[(bk (n real?) (t turtle?))
 			turtle?
-]
-
-Moves backwards by n (Real). Aliased as back.
+]{Moves backwards by n (Real). Aliased as back.}
 
 @defproc[
 	(rt (ang real?) (t turtle?))
 		turtle?
-]
-
-Rotates right by ang (Real). Aliased as right.
+]{Rotates right by ang (Real). Aliased as right.}
 
 @defproc[
 	(lt (ang real?) (t turtle?))
 		turtle?
-]
-
-Rotates left by ang (Real). Aliased as left.
+]{Rotates left by ang (Real). Aliased as left.}
 
 @defproc[
 	(pu (t turtle?))
 		turtle?
-]
-
-Pen up, no drawing but moves as is. Aliased as penup.
+]{Pen up, no drawing but moves as is. Aliased as penup.}
 
 @defproc[
 	(pd (t turtle?))
 		turtle?
-]
-
-Pen down, draws. Aliased as pendown.
+]{Pen down, draws. Aliased as pendown.}
 
 @defproc[
 	(hide (t turtle?))
 		turtle?
-]
-
-Hides the triangular turtle.
+]{Hides the triangular turtle.}
 
 @defproc[
 	(show (t turtle?))
 		turtle?
-]
-
-Shows the triangular turtle.
+]{Shows the triangular turtle.}
 
 @defproc[
 	(arc-l (angle real?) (radius real?) (t turtle?))
 		turtle?
-]
-
-Moves turtle in an arc towards left with given angle and radius.
+]{Moves turtle in an arc towards left with given angle and radius.}
 
 @defproc[
 	(arc-r (angle real?) (radius real?) (t turtle?))
 		turtle?
-]
-
-Moves turtle in an arc towards right with given angle and radius.
+]{Moves turtle in an arc towards right with given angle and radius.}
 
 @defproc[
 	(arc (angle real?) (radius real?) (t turtle?))
 		turtle?
-]
-
-Draws an arc with turtle at center with given start angle and radius. The arc always starts on right side of turtle.
+]{Draws an arc with turtle at center with given start angle and radius. The arc always starts on right side of turtle.}
 
 @defproc[
 	(turtles (f1 TurtleF) ...)
 		TurtleF
-]
-
-Takes any number of TurtleF forms f1 ... and composes into a single function of type TurtleF.
+]{Takes any number of TurtleF forms f1 ... and composes into a single function of type TurtleF.}
 
 @defproc[
 	(repeat (n integer?) (f1 TurtleF) ...)
 		TurtleF
-]
-
-Takes a Positive-Integer n and any number of TurtleF forms f1 ... and creates a TurtleF which is the compositing of f1 ... repeated n times.
+]{Takes a Positive-Integer n and any number of TurtleF forms f1 ... and creates a TurtleF which is the compositing of f1 ... repeated n times.}
 
 @section{Various types in the library}
 
@@ -177,9 +151,7 @@ Takes a Positive-Integer n and any number of TurtleF forms f1 ... and creates a 
 			[visible boolean?]
 			[ops list?])
 
-]
-
-The main struct which holds the current state of the turtle. Every operation works on a turtle struct and creates a new one with the drawing operation cons'd to its list of ops.
+]{The main struct which holds the current state of the turtle. Every operation works on a turtle struct and creates a new one with the drawing operation cons'd to its list of ops.}
 
 @defthing[TurtleF (turtle? . -> . turtle?)]{
 	The basic type of every primitive operation as well as user defined function.	
@@ -189,32 +161,26 @@ The main struct which holds the current state of the turtle. Every operation wor
 @defproc[
 	(t< (op symbol?) (a any/c) ...)
 	TurtleF
-]
-
-A macro that converts a function that takes as the last argument a turtle object to a curried version with type TurtleF.
+]{A macro that converts a function that takes as the last argument a turtle object to a curried version with type TurtleF.}
 
 @section{Turtle drawing functions}
 
 @defproc[
 	(draw 
 		(tf TurtleF)
-		(height integer? 800)
-		(width integer? 800)
-		(line-width integer? 1)
+		(#:height height integer? 800)
+		(#:width width integer? 800)
+		(#:line-width line-width integer? 1)
 	)
 	void?
-]
-
-Takes a TurtleF and returns a bitmap image of the drawing. Default width and height is 800x800.
+]{Takes a TurtleF and returns a bitmap image of the drawing. Default width and height is 800x800.}
 
 @defproc[
 	(show! 
 		(tf TurtleF)
-		(#height height integer? 800)
-		(#width width integer? 800)
-		(#line-width line-width integer? 1)
+		(#:height height integer? 800)
+		(#:width width integer? 800)
+		(#:line-width line-width integer? 1)
 	)
 	void?
-]
-
-Takes a TurtleF and opens a window with the drawing in it.
+]{Takes a TurtleF and opens a window with the drawing in it.}
