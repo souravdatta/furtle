@@ -210,9 +210,9 @@ Takes a TurtleF and returns a bitmap image of the drawing. Default width and hei
 @defproc[
 	(show! 
 		(tf TurtleF)
-		(height integer? 800)
-		(width integer? 800)
-		(line-width integer? 1)
+		(#:height integer? 800)
+		(#:width integer? 800)
+		(#:line-width integer? 1)
 	)
 	void?
 ]
