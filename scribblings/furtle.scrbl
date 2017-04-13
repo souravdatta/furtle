@@ -172,7 +172,7 @@ Or,
 		(#:width width integer? 800)
 		(#:line-width line-width integer? 1)
 	)
-	void?
+	(Instance Bitmap%)
 ]{Takes a TurtleF and returns a bitmap image of the drawing. Default width and height is 800x800.}
 
 @defproc[

@@ -242,14 +242,14 @@ turtle object to a curried version with type TurtleF.
 ## 4. Turtle drawing functions
 
 ```racket
-(draw  tf                                
-      [#:height height                   
-       #:width width                     
-       #:line-width line-width]) -> void?
-  tf : TurtleF                           
-  height : integer? = 800                
-  width : integer? = 800                 
-  line-width : integer? = 1              
+(draw  tf                                             
+      [#:height height                                
+       #:width width                                  
+       #:line-width line-width]) -> (Instance Bitmap%)
+  tf : TurtleF                                        
+  height : integer? = 800                             
+  width : integer? = 800                              
+  line-width : integer? = 1                           
 ```
 
 Takes a TurtleF and returns a bitmap image of the drawing. Default width
