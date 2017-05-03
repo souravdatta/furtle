@@ -153,13 +153,41 @@
 (define (make-turtle xpos ypos)
   (turtle xpos ypos 0 'pendown #t empty))
 
-(define forward fd)
-(define back bk)
-(define right rt)
-(define left lt)
-(define penup pu)
-(define pendown pd)
+(: forward (-> Real TurtleF))
+(define (forward len) (t< fd len))
 
+(: back (-> Real TurtleF))
+(define (back len) (t< bk len))
+
+(: right (-> Real TurtleF))
+(define (right len) (t< rt len))
+
+(: left (-> Real TurtleF))
+(define (left len) (t< lt len))
+
+(: penup (-> TurtleF))
+(define (penup) (t< pu))
+
+(: pendown (-> TurtleF))
+(define (pendown) (t< pd))
+
+(: turtle-hide (-> TurtleF))
+(define (turtle-hide) (t< hide))
+
+(: turtle-show (-> TurtleF))
+(define (turtle-show) (t< show))
+
+(: arc-right (-> Real Real TurtleF))
+(define (arc-right x y)
+  (t< arc-r x y))
+
+(: arc-left (-> Real Real TurtleF))
+(define (arc-left x y)
+  (t< arc-l x y))
+
+(: sarc (-> Real Real TurtleF))
+(define (sarc x y)
+  (t< arc x y))
 
 (provide
  (struct-out turtle)

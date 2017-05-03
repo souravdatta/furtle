@@ -39,6 +39,24 @@ We want to create a drawing of a fibonacci tree of depth 14. Here's the way to p
 ]
 
 The function fib-tree is called recursively to create the lower depth trees. There's a differentiation between how we call a turtle primitive such as fd and our own function fib-tree. This is because, the fd function can double down as a one that takes a turtle in its second argument and return the new turtle. But, in it's (t< fd n) form, it simply returns a TurtleF which on giving a concrete turtle will create a new turtle. The weird t< is simply a macro on top of curry library function.
+A (t< fn-name arg1 arg2 ...) actually gets transformed into (λ ([t : turtle]) : turtle (fn-name arg1 arg2 ... t)). If you do not want to use this form, there are longer forms of the primitives which does the same operation but does not require the extra (t< ...) form. As an example, the above function can be re-written as:
+
+@racketblock[
+(require furtle)
+
+(: fib-tree (-> Real TurtleF))
+(define (fib-tree depth)
+    (if (>= depth 1)
+          (turtles (forward 15)
+                   (left 15)
+                   (fib-tree (- depth 1))
+                   (right 30)
+                   (fib-tree (- depth 1))
+                   (left 15)
+                   (back 15))
+          (turtles)))
+]
+
 
 @margin-note{The thing to notice is that this is not interactive as in a typical Logo software. The drawing is created at the end of running the program - which is inconvenient but currently that is how it is.}
 
@@ -55,7 +73,7 @@ This will open a new window with the drawing and a red triangular turtle indicat
 @racketblock[
 (show! (turtles
         (fib-tree 10)
-        (t< lt 180)
+        (left 180)
         (fib-tree 10)))]
 
 Or,
@@ -63,7 +81,7 @@ Or,
 @racketblock[
 (show! (repeat 4
                (fib-tree 10)
-               (t< rt 90)))]
+               (right 90)))]
 
 Or,
 
@@ -71,10 +89,10 @@ Or,
 (show! (turtles
         (repeat 4
                (fib-tree 10)
-               (t< rt 90))
+               (right 90))
         (repeat 4
                (fib-tree 14)
-               (t< rt 90))))]
+               (right 90))))]
 
 
 @section{Turtle move functions}
@@ -82,9 +100,16 @@ Or,
 @defproc[(fd (n real?) (t turtle?))
 			turtle?]{Forwards the turtle by n (Real). Aliased as foward.}
 
+@defproc[(forward (n real?))
+			TurtleF]{Forwards the turtle by n (Real).}
+
 @defproc[(bk (n real?) (t turtle?))
 			turtle?
 ]{Moves backwards by n (Real). Aliased as back.}
+
+@defproc[(back (n real?))
+			TurtleF
+]{Moves backwards by n (Real).}
 
 @defproc[
 	(rt (ang real?) (t turtle?))
@@ -92,9 +117,19 @@ Or,
 ]{Rotates right by ang (Real). Aliased as right.}
 
 @defproc[
+	(right (ang real?))
+		TurtleF
+]{Rotates right by ang (Real).}
+
+@defproc[
 	(lt (ang real?) (t turtle?))
 		turtle?
 ]{Rotates left by ang (Real). Aliased as left.}
+
+@defproc[
+	(left (ang real?))
+		TurtleF
+]{Rotates left by ang (Real).}
 
 @defproc[
 	(pu (t turtle?))
@@ -102,13 +137,28 @@ Or,
 ]{Pen up, no drawing but moves as is. Aliased as penup.}
 
 @defproc[
+	(penup)
+		TurtleF
+]{Pen up, no drawing but moves as is.}
+
+@defproc[
 	(pd (t turtle?))
 		turtle?
 ]{Pen down, draws. Aliased as pendown.}
 
 @defproc[
+	(pendown)
+		TurtleF
+]{Pen down, draws.}
+
+@defproc[
 	(hide (t turtle?))
 		turtle?
+]{Hides the triangular turtle.}
+
+@defproc[
+	(turtle-hide)
+		TurtleF
 ]{Hides the triangular turtle.}
 
 @defproc[
@@ -117,8 +167,18 @@ Or,
 ]{Shows the triangular turtle.}
 
 @defproc[
+	(turtle-show)
+		TurtleF
+]{Shows the triangular turtle.}
+
+@defproc[
 	(arc-l (angle real?) (radius real?) (t turtle?))
 		turtle?
+]{Moves turtle in an arc towards left with given angle and radius.}
+
+@defproc[
+	(arc-left (angle real?) (radius real?))
+		TurtleF
 ]{Moves turtle in an arc towards left with given angle and radius.}
 
 @defproc[
@@ -127,8 +187,18 @@ Or,
 ]{Moves turtle in an arc towards right with given angle and radius.}
 
 @defproc[
+	(arc-right (angle real?) (radius real?))
+		TurtleF
+]{Moves turtle in an arc towards right with given angle and radius.}
+
+@defproc[
 	(arc (angle real?) (radius real?) (t turtle?))
 		turtle?
+]{Draws an arc with turtle at center with given start angle and radius. The arc always starts on right side of turtle.}
+
+@defproc[
+	(sarc (angle real?) (radius real?))
+		TurtleF
 ]{Draws an arc with turtle at center with given start angle and radius. The arc always starts on right side of turtle.}
 
 @defproc[
