@@ -39,7 +39,7 @@ We want to create a drawing of a fibonacci tree of depth 14. Here's the way to p
 ]
 
 The function fib-tree is called recursively to create the lower depth trees. There's a differentiation between how we call a turtle primitive such as fd and our own function fib-tree. This is because, the fd function can double down as a one that takes a turtle in its second argument and return the new turtle. But, in it's (t< fd n) form, it simply returns a TurtleF which on giving a concrete turtle will create a new turtle. The weird t< is simply a macro on top of curry library function.
-A (t< fn-name arg1 arg2 ...) actually gets transformed into (λ ([t : turtle]) : turtle (fn-name arg1 arg2 ... t)). If you do not want to use this form, there are longer forms of the primitives which does the same operation but does not require the extra (t< ...) form. As an example, the above function can be re-written as:
+A (t< fn-name arg1 arg2 ...) actually gets transformed into (λ ([t : turtle]) : turtle (fn-name arg1 arg2 ... t)). If you do not want to use this form, there are longer forms of the primitives which does the same operation but does not require the extra (t< ...) form. However, it is preferable to use the longer names [(forward 100) instead of (t< fd 100)] as they are clearer and also work in an untyped module. As an example, the above function can be re-written as:
 
 @racketblock[
 (require furtle)

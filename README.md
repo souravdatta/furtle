@@ -54,7 +54,29 @@ function can double down as a one that takes a turtle in its second
 argument and return the new turtle. But, in it’s \(t< fd n\) form, it
 simply returns a TurtleF which on giving a concrete turtle will create a
 new turtle. The weird t< is simply a macro on top of curry library
-function.
+function. A \(t< fn-name arg1 arg2 ...\) actually gets transformed into
+\(λ \(\[t : turtle\]\) : turtle \(fn-name arg1 arg2 ... t\)\). If you do
+not want to use this form, there are longer forms of the primitives
+which does the same operation but does not require the extra \(t< ...\)
+form. However, it is preferable to use the longer names \[\(forward
+100\) instead of \(t< fd 100\)\] as they are clearer and also work in an
+untyped module. As an example, the above function can be re-written as:
+
+```racket
+(require furtle)                         
+                                         
+(: fib-tree (-> Real TurtleF))           
+(define (fib-tree depth)                 
+    (if (>= depth 1)                     
+          (turtles (forward 15)          
+                   (left 15)             
+                   (fib-tree (- depth 1))
+                   (right 30)            
+                   (fib-tree (- depth 1))
+                   (left 15)             
+                   (back 15))            
+          (turtles)))                    
+```
 
 > The thing to notice is that this is not interactive as in a typical Logo
 > software. The drawing is created at the end of running the program -
@@ -75,7 +97,7 @@ compose new drawing spec.
 ```racket
 (show! (turtles        
         (fib-tree 10)  
-        (t< lt 180)    
+        (left 180)     
         (fib-tree 10)))
 ```
 
@@ -84,7 +106,7 @@ Or,
 ```racket
 (show! (repeat 4            
                (fib-tree 10)
-               (t< rt 90))) 
+               (right 90))) 
 ```
 
 Or,
@@ -93,10 +115,10 @@ Or,
 (show! (turtles             
         (repeat 4           
                (fib-tree 10)
-               (t< rt 90))  
+               (right 90))  
         (repeat 4           
                (fib-tree 14)
-               (t< rt 90))))
+               (right 90))))
 ```
 
 ## 2. Turtle move functions
@@ -110,12 +132,26 @@ Or,
 Forwards the turtle by n \(Real\). Aliased as foward.
 
 ```racket
+(forward n) -> TurtleF
+  n : real?           
+```
+
+Forwards the turtle by n \(Real\).
+
+```racket
 (bk n t) -> turtle?
   n : real?        
   t : turtle?      
 ```
 
 Moves backwards by n \(Real\). Aliased as back.
+
+```racket
+(back n) -> TurtleF
+  n : real?        
+```
+
+Moves backwards by n \(Real\).
 
 ```racket
 (rt ang t) -> turtle?
@@ -126,12 +162,26 @@ Moves backwards by n \(Real\). Aliased as back.
 Rotates right by ang \(Real\). Aliased as right.
 
 ```racket
+(right ang) -> TurtleF
+  ang : real?         
+```
+
+Rotates right by ang \(Real\).
+
+```racket
 (lt ang t) -> turtle?
   ang : real?        
   t : turtle?        
 ```
 
 Rotates left by ang \(Real\). Aliased as left.
+
+```racket
+(left ang) -> TurtleF
+  ang : real?        
+```
+
+Rotates left by ang \(Real\).
 
 ```racket
 (pu t) -> turtle?
@@ -141,11 +191,23 @@ Rotates left by ang \(Real\). Aliased as left.
 Pen up, no drawing but moves as is. Aliased as penup.
 
 ```racket
+(penup) -> TurtleF
+```
+
+Pen up, no drawing but moves as is.
+
+```racket
 (pd t) -> turtle?
   t : turtle?    
 ```
 
 Pen down, draws. Aliased as pendown.
+
+```racket
+(pendown) -> TurtleF
+```
+
+Pen down, draws.
 
 ```racket
 (hide t) -> turtle?
@@ -155,8 +217,20 @@ Pen down, draws. Aliased as pendown.
 Hides the triangular turtle.
 
 ```racket
+(turtle-hide) -> TurtleF
+```
+
+Hides the triangular turtle.
+
+```racket
 (show t) -> turtle?
   t : turtle?      
+```
+
+Shows the triangular turtle.
+
+```racket
+(turtle-show) -> TurtleF
 ```
 
 Shows the triangular turtle.
@@ -171,6 +245,14 @@ Shows the triangular turtle.
 Moves turtle in an arc towards left with given angle and radius.
 
 ```racket
+(arc-left angle radius) -> TurtleF
+  angle : real?                   
+  radius : real?                  
+```
+
+Moves turtle in an arc towards left with given angle and radius.
+
+```racket
 (arc-r angle radius t) -> turtle?
   angle : real?                  
   radius : real?                 
@@ -180,10 +262,27 @@ Moves turtle in an arc towards left with given angle and radius.
 Moves turtle in an arc towards right with given angle and radius.
 
 ```racket
+(arc-right angle radius) -> TurtleF
+  angle : real?                    
+  radius : real?                   
+```
+
+Moves turtle in an arc towards right with given angle and radius.
+
+```racket
 (arc angle radius t) -> turtle?
   angle : real?                
   radius : real?               
   t : turtle?                  
+```
+
+Draws an arc with turtle at center with given start angle and radius.
+The arc always starts on right side of turtle.
+
+```racket
+(sarc angle radius) -> TurtleF
+  angle : real?               
+  radius : real?              
 ```
 
 Draws an arc with turtle at center with given start angle and radius.
