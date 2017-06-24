@@ -1,7 +1,7 @@
 #lang typed/racket
 
 
-(require furtle)
+(require "../main.rkt")
 
 ;; example 1
 
@@ -37,4 +37,34 @@
 
 
 (draw (turtles (turtle-hide) (lines 200) (right 180) (lines 200)))
+
+(draw (turtles
+       save
+       (forward 40)
+       (sarc 360 10)
+       (right 45)
+       (forward 40)
+       save ; save current state of turtle
+       (λ ([t : turtle])
+         ; now make a new turtle at a new position
+         (turtle-from t
+                      #:tx (+ 50 (turtle-tx t))
+                      #:ty (+ 50 (turtle-ty t))))
+       ; continue with the new turtle
+       (forward 40)
+       (sarc 360 10)
+       (right 45)
+       (forward 40)
+       ; restore saved turtle
+       restore
+       (forward 80)
+       (sarc 360 20)
+       (right 45)
+       (forward 80)
+       restore
+       (sarc 360 20)
+       (forward 80)
+       (sarc 360 20)
+       (right 45)
+       (forward 80)))
 

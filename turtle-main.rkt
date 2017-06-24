@@ -9,6 +9,7 @@
                 [angle : Real]
                 [penstate : (U 'penup 'pendown)]
                 [visible : Boolean]
+                [saves : (Listof (List Real Real Real (U 'penup 'pendown) Boolean))]
                 [ops : (Listof Op)]))
 
 (define-type TurtleF (-> turtle turtle))
@@ -24,6 +25,7 @@
             (turtle-angle t)
             (turtle-penstate t)
             (turtle-visible t)
+            (turtle-saves t)
             (cons (list (cons 'line (turtle-penstate t))
                         (cons tx ty)
                         (cons newx newy))
@@ -40,6 +42,7 @@
           (- (turtle-angle t) angle)
           (turtle-penstate t)
           (turtle-visible t)
+          (turtle-saves t)
           (turtle-ops t)))
 
 (: lt (-> Real turtle turtle))
@@ -49,6 +52,7 @@
           (+ (turtle-angle t) angle)
           (turtle-penstate t)
           (turtle-visible t)
+          (turtle-saves t)
           (turtle-ops t)))
 
 (: turtle-compose (-> (Listof TurtleF)
@@ -92,6 +96,7 @@
             (turtle-angle t)
             (turtle-penstate t)
             (turtle-visible t)
+            (turtle-saves t)
             (cons (list (cons 'arc (turtle-penstate t))
                         x y
                         width height
@@ -106,6 +111,7 @@
           (turtle-angle t)
           'penup
           (turtle-visible t)
+          (turtle-saves t)
           (turtle-ops t)))
 
 (: pd TurtleF)
@@ -115,6 +121,7 @@
           (turtle-angle t)
           'pendown
           (turtle-visible t)
+          (turtle-saves t)
           (turtle-ops t)))
 
 (: hide TurtleF)
@@ -124,6 +131,7 @@
           (turtle-angle t)
           (turtle-penstate t)
           #f
+          (turtle-saves t)
           (turtle-ops t)))
 
 (: show TurtleF)
@@ -133,6 +141,7 @@
           (turtle-angle t)
           (turtle-penstate t)
           #t
+          (turtle-saves t)
           (turtle-ops t)))
         
 (define-syntax t<
@@ -151,8 +160,29 @@
 
 (: make-turtle (-> Real Real turtle))
 (define (make-turtle xpos ypos)
-  (turtle xpos ypos 0 'pendown #t empty))
+  (turtle xpos ypos 0 'pendown #t empty empty))
 
+(: turtle-from (->* (turtle)
+                    (#:tx (U False Real)
+                     #:ty (U False Real)
+                     #:angle (U False Real)
+                     #:penstate (U False 'penup 'pendown)
+                     #:visible (U False Boolean))
+                    turtle))
+(define (turtle-from t
+                     #:tx [tx #f]
+                     #:ty [ty #f]
+                     #:angle [angle #f]
+                     #:penstate [penstate #f]
+                     #:visible [visible #f])
+  (turtle (if tx tx (turtle-tx t))
+          (if ty ty (turtle-ty t))
+          (if angle angle (turtle-angle t))
+          (if penstate penstate (turtle-penstate t))
+          (if visible visible (turtle-visible t))
+          (turtle-saves t)
+          (turtle-ops t)))
+                     
 (: forward (-> Real TurtleF))
 (define (forward len) (t< fd len))
 
@@ -188,6 +218,36 @@
 (: sarc (-> Real Real TurtleF))
 (define (sarc x y)
   (t< arc x y))
+
+(: save TurtleF)
+(define (save t)
+  (turtle
+   (turtle-tx t)
+   (turtle-ty t)
+   (turtle-angle t)
+   (turtle-penstate t)
+   (turtle-visible t)
+   (cons (list (turtle-tx t)
+               (turtle-ty t)
+               (turtle-angle t)
+               (turtle-penstate t)
+               (turtle-visible t))
+         (turtle-saves t))
+   (turtle-ops t)))
+
+(: restore TurtleF)
+(define (restore t)
+  (if (not (empty? (turtle-saves t)))
+      (let ([save (car (turtle-saves t))])
+        (turtle
+         (first save)
+         (second save)
+         (third save)
+         (fourth save)
+         (fifth save)
+         (cdr (turtle-saves t))
+         (turtle-ops t)))
+      t))
 
 (provide
  (struct-out turtle)
