@@ -3,7 +3,7 @@
 
 (define-type Op (U (List (Pairof 'line (U 'penup 'pendown))  (Pairof Real Real) (Pairof Real Real))
                    (List (Pairof 'arc (U 'penup 'pendown)) Real Real Real Real Real Real)))
-                          
+                  
 (struct turtle ([tx : Real]
                 [ty : Real]
                 [angle : Real]
@@ -167,19 +167,19 @@
                      #:ty (U False Real)
                      #:angle (U False Real)
                      #:penstate (U False 'penup 'pendown)
-                     #:visible (U False Boolean))
+                     #:visible (U 'unused Boolean))
                     turtle))
 (define (turtle-from t
                      #:tx [tx #f]
                      #:ty [ty #f]
                      #:angle [angle #f]
                      #:penstate [penstate #f]
-                     #:visible [visible #f])
+                     #:visible [visible 'unused])
   (turtle (if tx tx (turtle-tx t))
           (if ty ty (turtle-ty t))
           (if angle angle (turtle-angle t))
           (if penstate penstate (turtle-penstate t))
-          (if visible visible (turtle-visible t))
+          (if (eqv? visible 'unused) (turtle-visible t) (if visible visible #f))
           (turtle-saves t)
           (turtle-ops t)))
                      
@@ -219,35 +219,37 @@
 (define (sarc x y)
   (t< arc x y))
 
-(: save TurtleF)
-(define (save t)
-  (turtle
-   (turtle-tx t)
-   (turtle-ty t)
-   (turtle-angle t)
-   (turtle-penstate t)
-   (turtle-visible t)
-   (cons (list (turtle-tx t)
-               (turtle-ty t)
-               (turtle-angle t)
-               (turtle-penstate t)
-               (turtle-visible t))
-         (turtle-saves t))
-   (turtle-ops t)))
+(: save (-> TurtleF))
+(define (save)
+  (λ ([t : turtle]) : turtle
+    (turtle
+     (turtle-tx t)
+     (turtle-ty t)
+     (turtle-angle t)
+     (turtle-penstate t)
+     (turtle-visible t)
+     (cons (list (turtle-tx t)
+                 (turtle-ty t)
+                 (turtle-angle t)
+                 (turtle-penstate t)
+                 (turtle-visible t))
+           (turtle-saves t))
+     (turtle-ops t))))
 
-(: restore TurtleF)
-(define (restore t)
-  (if (not (empty? (turtle-saves t)))
-      (let ([save (car (turtle-saves t))])
-        (turtle
-         (first save)
-         (second save)
-         (third save)
-         (fourth save)
-         (fifth save)
-         (cdr (turtle-saves t))
-         (turtle-ops t)))
-      t))
+(: restore (-> TurtleF))
+(define (restore)
+  (λ ([t : turtle]) : turtle
+    (if (not (empty? (turtle-saves t)))
+        (let ([save (car (turtle-saves t))])
+          (turtle
+           (first save)
+           (second save)
+           (third save)
+           (fourth save)
+           (fifth save)
+           (cdr (turtle-saves t))
+           (turtle-ops t)))
+        t)))
 
 (provide
  (struct-out turtle)

@@ -211,6 +211,17 @@ Or,
 		TurtleF
 ]{Takes a Positive-Integer n and any number of TurtleF forms f1 ... and creates a TurtleF which is the compositing of f1 ... repeated n times.}
 
+@defproc[
+         (save)
+         TurtleF
+]{Saves the current state of the turtle - x, y, angle, pen state and arrow visibility on to a stack.}
+
+@defproc[
+         (restore)
+         TurtleF
+]{Restores the current state of the turtle - x, y, angle, pen state and arrow visibility from the top of the stack.}
+
+
 @section{Various types in the library}
 
 @defstruct[
@@ -227,6 +238,14 @@ Or,
 	The basic type of every primitive operation as well as user defined function.	
 }
 
+@defproc[
+         (turtle-from (t turtle?)
+                      (#:tx tx (or/c #f real?) #f)
+                      (#:ty ty (or/c #f real?) #f)
+                      (#:angle angle (or/c #f real?) #f)
+                      (#:penstate penstate (or/c #f 'penup 'pendown) #f)
+                      (#:visible visible (or/c 'unused boolean?) 'unused))
+         turtle?]{Returns a new turtle struct from a copy of t replacing one or more values passed as keyword arguments.}
 
 @defproc[
 	(t< (op symbol?) (a any/c) ...)
@@ -240,7 +259,9 @@ Or,
 		(tf TurtleF)
 		(#:height height integer? 800)
 		(#:width width integer? 800)
-		(#:line-width line-width integer? 1)
+		(#:pen-width line-width integer? 1)
+                (#:pen-color pen-width string? "black")
+                (#:background-color background-color string? "orange")
 	)
 	(Instance Bitmap%)
 ]{Takes a TurtleF and returns a bitmap image of the drawing. Default width and height is 800x800.}
@@ -250,7 +271,9 @@ Or,
 		(tf TurtleF)
 		(#:height height integer? 800)
 		(#:width width integer? 800)
-		(#:line-width line-width integer? 1)
+		(#:pen-width line-width integer? 1)
+                (#:pen-color pen-width string? "black")
+                (#:background-color background-color string? "orange")
 	)
 	void?
 ]{Takes a TurtleF and opens a window with the drawing in it.}

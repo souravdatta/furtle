@@ -15,16 +15,20 @@
 (: default-line-width Positive-Integer)
 (define default-line-width 1)
 
-(: background-color String)
-(define background-color "orange")
+(: default-background-color String)
+(define default-background-color "orange")
 
-(: turtle-draw (-> turtle Positive-Integer Positive-Integer (Instance DC<%>) Positive-Integer Void))
-(define (turtle-draw t width height dc line-width)
+(: default-pen-color String)
+(define default-pen-color "black")
+
+(: turtle-draw (-> turtle Positive-Integer Positive-Integer (Instance DC<%>)
+                   Positive-Integer String String Void))
+(define (turtle-draw t width height dc line-width pen-color background-color)
   (let ([ops : (Listof Op) (reverse (turtle-ops t))])
     (send dc set-brush background-color 'solid)
-    (send dc set-pen "red" line-width 'solid)
+    (send dc set-pen pen-color line-width 'solid)
     (send dc draw-rectangle 0 0 width height)
-    (send dc set-pen "black" line-width 'solid)
+    (send dc set-pen pen-color line-width 'solid)
     (send dc set-brush background-color 'transparent)
     (for ([x ops])
       (cond
@@ -54,25 +58,51 @@
                   #:arrow-head-size 12))))
 
 (: turtle-bitmap (->* (turtle Positive-Integer Positive-Integer)
-                      (#:line-width Positive-Integer)
+                      (#:pen-width Positive-Integer
+                       #:pen-color String
+                       #:background-color String)
                       (Instance Bitmap%)))
-(define (turtle-bitmap t width height #:line-width [line-width default-line-width])
+(define (turtle-bitmap t width height
+                       #:pen-width [line-width default-line-width]
+                       #:pen-color [pen-color default-pen-color]
+                       #:background-color [background-color default-background-color])
   (let* ([target : (Instance Bitmap%) (make-bitmap width height)]
          [dc : (Instance Bitmap-DC%) (new bitmap-dc% [bitmap target])])
-    (turtle-draw t width height dc line-width)     
+    (turtle-draw t width height dc line-width pen-color background-color)     
     target))
     
-(: draw (->* (TurtleF) (#:width Positive-Integer #:height Positive-Integer #:line-width Positive-Integer) (Instance Bitmap%)))
-(define (draw tf #:width [width 800] #:height [height 800] #:line-width [line-width default-line-width])
+(: draw (->* (TurtleF)
+             (#:width Positive-Integer
+              #:height Positive-Integer
+              #:pen-width Positive-Integer
+              #:pen-color String
+              #:background-color String)
+             (Instance Bitmap%)))
+(define (draw tf
+              #:width [width 800] #:height [height 800]
+              #:pen-width [line-width default-line-width]
+              #:pen-color [pen-color default-pen-color]
+              #:background-color [background-color default-background-color])
   (let ([centerx (/ width 2)]
         [centery (/ height 2)])
     (turtle-bitmap (tf (make-turtle centerx centery))
                    width
                    height
-                   #:line-width line-width)))
+                   #:pen-width line-width
+                   #:pen-color pen-color
+                   #:background-color background-color)))
 
-(: show! (->* (TurtleF) (#:width Positive-Integer #:height Positive-Integer #:line-width Positive-Integer) Void))
-(define (show! tf #:width [width 800] #:height [height 800] #:line-width [line-width default-line-width])
+(: show! (->* (TurtleF) (#:width Positive-Integer
+                         #:height Positive-Integer
+                         #:pen-width Positive-Integer
+                         #:pen-color String
+                         #:background-color String) Void))
+(define (show! tf
+               #:width [width 800]
+               #:height [height 800]
+               #:pen-width [line-width default-line-width]
+               #:pen-color [pen-color default-pen-color]
+               #:background-color [background-color default-background-color])
   (let* ([frame : (Instance Frame%) (new frame% [label "Furtle"] [width width] [height height])]
          [canvas : (Instance Canvas%) (new canvas%
                                            [parent frame]
@@ -88,7 +118,9 @@
                                                                             fwidth
                                                                             fheight
                                                                             dc
-                                                                            line-width)))])])
+                                                                            line-width
+                                                                            pen-color
+                                                                            background-color)))])])
     (send frame show #t)))
 
   
