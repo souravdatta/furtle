@@ -104,5 +104,5 @@
        (restore))
       (turtles)))
 
-(draw (fib-tree 14))
+(draw (turtles (turtle-hide) (pen-color "green") (fib-tree 14)))
 
