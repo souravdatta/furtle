@@ -2,7 +2,9 @@
 
 
 (define-type Op (U (List (Pairof 'line (U 'penup 'pendown))  (Pairof Real Real) (Pairof Real Real))
-                   (List (Pairof 'arc (U 'penup 'pendown)) Real Real Real Real Real Real)))
+                   (List (Pairof 'arc (U 'penup 'pendown)) Real Real Real Real Real Real)
+                   (List (Pairof 'pen-color String))
+                   (List (Pairof 'pen-width Positive-Integer))))
                   
 (struct turtle ([tx : Real]
                 [ty : Real]
@@ -218,6 +220,28 @@
 (: sarc (-> Real Real TurtleF))
 (define (sarc x y)
   (t< arc x y))
+
+(: pen-width (-> Positive-Integer TurtleF))
+(define (pen-width n)
+  (λ ([t : turtle])
+    (turtle (turtle-tx t)
+            (turtle-ty t)
+            (turtle-angle t)
+            (turtle-penstate t)
+            (turtle-visible t)
+            (turtle-saves t)
+            (cons (list (cons 'pen-width n)) (turtle-ops t)))))
+
+(: pen-color (-> String TurtleF))
+(define (pen-color s)
+  (λ ([t : turtle])
+    (turtle (turtle-tx t)
+            (turtle-ty t)
+            (turtle-angle t)
+            (turtle-penstate t)
+            (turtle-visible t)
+            (turtle-saves t)
+            (cons (list (cons 'pen-color s)) (turtle-ops t)))))
 
 (: save (-> TurtleF))
 (define (save)

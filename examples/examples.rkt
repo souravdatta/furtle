@@ -40,11 +40,17 @@
 
 (draw (turtles
        (save)
+
+       (pen-width 4)
+       (pen-color "red")
        (forward 40)
        (sarc 360 10)
        (right 45)
        (forward 40)
        (save) ; save current state of turtle
+
+       (pen-color "blue")
+       (pen-width 2)
        (λ ([t : turtle])
          ; now make a new turtle at a new position
          (turtle-from t
@@ -57,6 +63,9 @@
        (forward 40)
        ; restore saved turtle
        (restore)
+
+       (pen-color "black")
+       (pen-width 1)
        (forward 80)
        (sarc 360 20)
        (right 45)
@@ -76,7 +85,24 @@
        (forward 50)
        (right 45)
        (forward 25))
-      #:background-color "white"
+      #:background-color "orange"
       #:pen-width 2
-      #:pen-color "blue")
+      #:pen-color "red")
+
+
+(: fib-tree (-> Integer TurtleF))
+(define (fib-tree depth)
+  (if (>= depth 2)
+      (turtles
+       (save)
+       (pen-width depth)
+       (forward 40)
+       (right 15)
+       (fib-tree (- depth 2))
+       (left 30)
+       (fib-tree (- depth 1))
+       (restore))
+      (turtles)))
+
+(draw (fib-tree 14))
 

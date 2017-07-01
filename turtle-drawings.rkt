@@ -16,7 +16,7 @@
 (define default-line-width 1)
 
 (: default-background-color String)
-(define default-background-color "orange")
+(define default-background-color "white")
 
 (: default-pen-color String)
 (define default-pen-color "black")
@@ -30,6 +30,7 @@
     (send dc draw-rectangle 0 0 width height)
     (send dc set-pen pen-color line-width 'solid)
     (send dc set-brush background-color 'transparent)
+
     (for ([x ops])
       (cond
         ((and (eq? (car (first x)) 'line)
@@ -43,7 +44,18 @@
                                                     (second x) (third x)
                                                     (abs (fourth x)) (abs (fifth x))
                                                     (sixth x) (seventh x)))
+        ((eq? (car (first x)) 'pen-color) (send dc
+                                                set-pen
+                                                (cdr (first x))
+                                                (send (send dc get-pen) get-width)
+                                                'solid))
+        ((eq? (car (first x)) 'pen-width) (send dc
+                                                set-pen
+                                                (send (send dc get-pen) get-color)
+                                                (cdr (first x))
+                                                'solid))
         (else empty)))
+    
     (when (turtle-visible t)
       (send dc set-brush "red" 'solid)
       (send dc set-pen "red" 1 'solid)

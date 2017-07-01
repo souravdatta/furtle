@@ -202,6 +202,16 @@ Or,
 ]{Draws an arc with turtle at center with given start angle and radius. The arc always starts on right side of turtle.}
 
 @defproc[
+         (pen-width (n positive-integer?))
+         TurtleF
+]{Sets the pen width of the turtle to the given postive integer n. Note that save/restore do not consider pen width.}
+
+@defproc[
+         (pen-color (n string?))
+         TurtleF
+]{Sets the color of the turtle to color identified by given string. If the string does not specify a color it will throw a runtime exception. Note that save/restore do not consider pen color.}
+
+@defproc[
 	(turtles (f1 TurtleF) ...)
 		TurtleF
 ]{Takes any number of TurtleF forms f1 ... and composes into a single function of type TurtleF.}
