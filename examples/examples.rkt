@@ -20,8 +20,8 @@
 
 (: lines (-> Real TurtleF))
 (define (lines rn)
-  (if (> rn 4.0)
-      (turtles (forward rn)
+  (turtle-when (> rn 4.0)
+               (forward rn)
                (penup)
                (back (/ rn 2))
                (pendown)
@@ -32,8 +32,7 @@
                (left 60)
                (penup)
                (back (/ rn 2))
-               (pendown))
-      (turtles)))
+               (pendown)))
 
 
 (draw (turtles (turtle-hide) (lines 200) (right 180) (lines 200)))
@@ -92,17 +91,15 @@
 
 (: fib-tree (-> Integer TurtleF))
 (define (fib-tree depth)
-  (if (>= depth 2)
-      (turtles
-       (save)
-       (pen-width depth)
-       (forward 40)
-       (right 15)
-       (fib-tree (- depth 2))
-       (left 30)
-       (fib-tree (- depth 1))
-       (restore))
-      (turtles)))
+  (turtle-when (>= depth 2)
+               (save)
+               (pen-width depth)
+               (forward 40)
+               (right 15)
+               (fib-tree (- depth 2))
+               (left 30)
+               (fib-tree (- depth 1))
+               (restore)))
 
 (draw (turtles (turtle-hide) (pen-color "green") (fib-tree 14)))
 

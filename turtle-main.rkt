@@ -275,6 +275,11 @@
            (turtle-ops t)))
         t)))
 
+(define-syntax-rule (turtle-when cond e1 ...)
+  (if cond
+      (turtles e1 ...)
+      (turtles)))
+
 (provide
  (struct-out turtle)
  (except-out
