@@ -103,6 +103,9 @@ Or,
 @defproc[(forward (n real?))
 			TurtleF]{Forwards the turtle by n (Real).}
 
+@defproc[(move (new-x real?) (new-y real?))
+         TurtleF]{Moves the turtle to absolute coordinate (new-x, new-y), and if pen is down, draws a line.}
+
 @defproc[(bk (n real?) (t turtle?))
 			turtle?
 ]{Moves backwards by n (Real). Aliased as back.}

@@ -88,6 +88,13 @@
       #:pen-width 2
       #:pen-color "red")
 
+(draw (turtles
+       (forward 100)
+       (move 100 100)
+       (penup)
+       (move 200 200)
+       (pendown)
+       (move 300 300)))
 
 (: fib-tree (-> Integer TurtleF))
 (define (fib-tree depth)

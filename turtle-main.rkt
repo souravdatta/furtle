@@ -275,6 +275,19 @@
            (turtle-ops t)))
         t)))
 
+(: move (-> Real Real TurtleF))
+(define (move newx newy)
+  (λ ([t : turtle]) : turtle
+    (turtle newx newy
+            (turtle-angle t)
+            (turtle-penstate t)
+            (turtle-visible t)
+            (turtle-saves t)
+            (cons (list (cons 'line (turtle-penstate t))
+                        (cons (turtle-tx t) (turtle-ty t))
+                        (cons newx newy))
+                  (turtle-ops t)))))
+
 (define-syntax-rule (turtle-when cond e1 ...)
   (if cond
       (turtles e1 ...)
