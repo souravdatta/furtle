@@ -139,6 +139,15 @@ Forwards the turtle by n \(Real\). Aliased as foward.
 Forwards the turtle by n \(Real\).
 
 ```racket
+(move new-x new-y) -> TurtleF
+  new-x : real?              
+  new-y : real?              
+```
+
+Moves the turtle to absolute coordinate \(new-x, new-y\), and if pen is
+down, draws a line.
+
+```racket
 (bk n t) -> turtle?
   n : real?        
   t : turtle?      
@@ -289,6 +298,23 @@ Draws an arc with turtle at center with given start angle and radius.
 The arc always starts on right side of turtle.
 
 ```racket
+(pen-width n) -> TurtleF
+  n : positive-integer? 
+```
+
+Sets the pen width of the turtle to the given postive integer n. Note
+that save/restore do not consider pen width.
+
+```racket
+(pen-color n) -> TurtleF
+  n : string?           
+```
+
+Sets the color of the turtle to color identified by given string. If the
+string does not specify a color it will throw a runtime exception. Note
+that save/restore do not consider pen color.
+
+```racket
 (turtles f1 ...) -> TurtleF
   f1 : TurtleF             
 ```
@@ -304,6 +330,20 @@ function of type TurtleF.
 
 Takes a Positive-Integer n and any number of TurtleF forms f1 ... and
 creates a TurtleF which is the compositing of f1 ... repeated n times.
+
+```racket
+(save) -> TurtleF
+```
+
+Saves the current state of the turtle - x, y, angle, pen state and arrow
+visibility on to a stack.
+
+```racket
+(restore) -> TurtleF
+```
+
+Restores the current state of the turtle - x, y, angle, pen state and
+arrow visibility from the top of the stack.
 
 ## 3. Various types in the library
 
@@ -330,6 +370,24 @@ The basic type of every primitive operation as well as user defined
 function.
 
 ```racket
+(turtle-from  t                              
+             [#:tx tx                        
+              #:ty ty                        
+              #:angle angle                  
+              #:penstate penstate            
+              #:visible visible]) -> turtle? 
+  t : turtle?                                
+  tx : (or/c #f real?) = #f                  
+  ty : (or/c #f real?) = #f                  
+  angle : (or/c #f real?) = #f               
+  penstate : (or/c #f 'penup 'pendown) = #f  
+  visible : (or/c 'unused boolean?) = 'unused
+```
+
+Returns a new turtle struct from a copy of t replacing one or more
+values passed as keyword arguments.
+
+```racket
 (t< op a ...) -> TurtleF
   op : symbol?          
   a : any/c             
@@ -341,28 +399,36 @@ turtle object to a curried version with type TurtleF.
 ## 4. Turtle drawing functions
 
 ```racket
-(draw  tf                                             
-      [#:height height                                
-       #:width width                                  
-       #:line-width line-width]) -> (Instance Bitmap%)
-  tf : TurtleF                                        
-  height : integer? = 800                             
-  width : integer? = 800                              
-  line-width : integer? = 1                           
+(draw  tf                                                         
+      [#:height height                                            
+       #:width width                                              
+       #:pen-width line-width                                     
+       #:pen-color pen-width                                      
+       #:background-color background-color]) -> (Instance Bitmap%)
+  tf : TurtleF                                                    
+  height : integer? = 800                                         
+  width : integer? = 800                                          
+  line-width : integer? = 1                                       
+  pen-width : string? = "black"                                   
+  background-color : string? = "orange"                           
 ```
 
 Takes a TurtleF and returns a bitmap image of the drawing. Default width
 and height is 800x800.
 
 ```racket
-(show!  tf                                
-       [#:height height                   
-        #:width width                     
-        #:line-width line-width]) -> void?
-  tf : TurtleF                            
-  height : integer? = 800                 
-  width : integer? = 800                  
-  line-width : integer? = 1               
+(show!  tf                                            
+       [#:height height                               
+        #:width width                                 
+        #:pen-width line-width                        
+        #:pen-color pen-width                         
+        #:background-color background-color]) -> void?
+  tf : TurtleF                                        
+  height : integer? = 800                             
+  width : integer? = 800                              
+  line-width : integer? = 1                           
+  pen-width : string? = "black"                       
+  background-color : string? = "orange"               
 ```
 
 Takes a TurtleF and opens a window with the drawing in it.
