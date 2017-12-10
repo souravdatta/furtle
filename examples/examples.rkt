@@ -2,6 +2,8 @@
 
 
 (require furtle)
+(require furtle/when)
+
 
 ;; example 1
 
