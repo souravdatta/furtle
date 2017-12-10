@@ -294,6 +294,6 @@ Or,
 
 @section{Helper macros}
 
-@defthing[
-          (turtle-when cond e1 ...)
+@defform[
+          (turtle-when cond expr1 ...)                               
 ]{Takes a condition and a set of expressions and wraps them into a turtles call. Require furtle/when to use this macro.}
