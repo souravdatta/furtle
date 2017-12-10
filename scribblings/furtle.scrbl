@@ -290,3 +290,10 @@ Or,
 	)
 	void?
 ]{Takes a TurtleF and opens a window with the drawing in it.}
+
+
+@section{Helper macros}
+
+@defthing[
+          (turtle-when cond e1 ...)
+]{Takes a condition and a set of expressions and wraps them into a turtles call. Require furtle/when to use this macro.}
